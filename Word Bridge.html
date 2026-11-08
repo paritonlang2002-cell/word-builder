@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Word Bridge</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  min-height:100vh;
+  font-family:Inter,Arial,sans-serif;
+  background:linear-gradient(135deg,#eef4ff,#e4f8f2);
+  color:#26334a;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:24px;
+}
+.container{
+  width:100%;
+  max-width:850px;
+  background:#fff;
+  border-radius:24px;
+  padding:30px;
+  box-shadow:0 15px 45px rgba(37,57,85,.12);
+}
+header{text-align:center;margin-bottom:25px}
+h1{font-size:2rem;color:#253c68;margin-bottom:8px}
+header p{color:#718096;font-size:.95rem;line-height:1.5}
+.stats{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:25px;
+}
+.stat{
+  background:#f1f5fb;
+  padding:10px 18px;
+  border-radius:12px;
+  font-size:.9rem;
+}
+.stat strong{color:#315fbd}
+.challenge{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:20px;
+  background:#f7f9fd;
+  border-radius:18px;
+  padding:25px 15px;
+  margin-bottom:22px;
+}
+.word-card{
+  text-align:center;
+  min-width:100px;
+}
+.word-card small{
+  display:block;
+  color:#718096;
+  font-size:.78rem;
+  font-weight:800;
+  letter-spacing:1px;
+  margin-bottom:8px;
+}
+.target-word{
+  font-size:2.5rem;
+  font-weight:900;
+  color:#3475d0;
+  letter-spacing:3px;
+}
+.end-word{color:#e76b58}
+.arrow{
+  font-size:1.8rem;
+  color:#9aa9bd;
+}
+.bridge{
+  background:#f7f9fd;
+  border:1px solid #e7edf6;
+  border-radius:18px;
+  padding:20px;
+  margin-bottom:22px;
+}
+.bridge h2{
+  font-size:1.05rem;
+  color:#253c68;
+  margin-bottom:15px;
+}
+.steps{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:9px;
+}
+.step{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  width:100%;
+  max-width:340px;
+  padding:11px 15px;
+  border-radius:11px;
+  background:#fff;
+  border:1px solid #e1e8f2;
+  font-weight:800;
+}
+.step.current{
+  border:2px solid #3475d0;
+  background:#edf4ff;
+}
+.step.completed{
+  border-color:#b9e8cc;
+  background:#effbf3;
+  color:#16834a;
+}
+.step .number{
+  color:#8b9ab0;
+  font-size:.8rem;
+}
+.step-word{
+  font-size:1.15rem;
+  letter-spacing:3px;
+}
+.step-arrow{
+  color:#a1afc1;
+  font-size:.8rem;
+}
+.input-section{
+  text-align:center;
+  background:#f7f9fd;
+  padding:22px;
+  border-radius:18px;
+  margin-bottom:20px;
+}
+.input-section h2{
+  font-size:1.05rem;
+  margin-bottom:7px;
+}
+.input-section p{
+  color:#718096;
+  font-size:.88rem;
+  margin-bottom:15px;
+}
+.answer-row{
+  display:flex;
+  justify-content:center;
+  gap:9px;
+  flex-wrap:wrap;
+}
+input{
+  width:190px;
+  max-width:65%;
+  padding:13px;
+  border:2px solid #dce5f1;
+  border-radius:10px;
+  outline:none;
+  font-size:1.15rem;
+  font-weight:800;
+  letter-spacing:4px;
+  text-align:center;
+  text-transform:uppercase;
+  color:#253c68;
+}
+input:focus{border-color:#3475d0}
+button{
+  border:0;
+  padding:12px 17px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:800;
+  font-size:.88rem;
+  transition:transform .15s,filter .15s;
+}
+button:hover{filter:brightness(.95);transform:translateY(-2px)}
+button:active{transform:scale(.97)}
+.submit{background:#3475d0;color:white}
+.secondary{background:#e8edf5;color:#42516a}
+.primary{background:#253c68;color:white}
+.feedback{
+  min-height:25px;
+  margin-top:14px;
+  font-weight:800;
+  font-size:.92rem;
+}
+.feedback.good{color:#16834a}
+.feedback.bad{color:#d65b50}
+.controls{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:20px;
+}
+.status{
+  padding:14px 16px;
+  border-radius:12px;
+  background:#f1f5fb;
+  color:#53647d;
+  font-weight:700;
+  text-align:center;
+  font-size:.92rem;
+}
+.status.success{
+  background:#dcfce9;
+  color:#16834a;
+}
+.rules{
+  margin-top:22px;
+  padding:15px;
+  background:#fff8e8;
+  border:1px solid #f7e5b8;
+  border-radius:12px;
+  font-size:.88rem;
+  line-height:1.6;
+  color:#80652b;
+}
+@media(max-width:600px){
+  .container{padding:20px}
+  h1{font-size:1.65rem}
+  .challenge{gap:10px}
+  .target-word{font-size:2rem}
+  .arrow{font-size:1.3rem}
+  .word-card{min-width:85px}
+}
+</style>
+</head>
+<body>
+<main class="container">
+  <header>
+    <h1>🌉 Word Bridge</h1>
+    <p>Build a bridge between two words by changing just one letter at a time!</p>
+  </header>
+
+  <section class="stats">
+    <div class="stat">Moves: <strong id="moves">0</strong></div>
+    <div class="stat">Best: <strong id="best">—</strong></div>
+    <div class="stat">Puzzles solved: <strong id="solved">0</strong></div>
+  </section>
+
+  <section class="challenge">
+    <div class="word-card">
+      <small>START</small>
+      <div class="target-word" id="startWord">COLD</div>
+    </div>
+    <div class="arrow">➜</div>
+    <div class="word-card">
+      <small>DESTINATION</small>
+      <div class="target-word end-word" id="endWord">WARM</div>
+    </div>
+  </section>
+
+  <section class="bridge">
+    <h2>🧱 Your Word Bridge</h2>
+    <div class="steps" id="steps"></div>
+  </section>
+
+  <section class="input-section">
+    <h2>What's your next word?</h2>
+    <p>Change exactly one letter from your current word.</p>
+    <div class="answer-row">
+      <input id="wordInput" type="text" maxlength="4" placeholder="WORD" autocomplete="off" spellcheck="false">
+      <button class="submit" onclick="submitWord()">Add Word</button>
+    </div>
+    <div class="feedback" id="feedback" aria-live="polite"></div>
+  </section>
+
+  <div class="controls">
+    <button class="secondary" onclick="undoMove()">↶ Undo</button>
+    <button class="secondary" onclick="showHint()">💡 Hint</button>
+    <button class="primary" onclick="newPuzzle()">↻ New Puzzle</button>
+  </div>
+
+  <div class="status" id="status">🧩 Start building your word bridge!</div>
+
+  <div class="rules">
+    💡 <strong>How to play:</strong>
+    <br>1. Change only one letter per move.
+    <br>2. Every new word must be a valid English word.
+    <br>3. Keep the same word length.
+    <br>4. Reach the destination using as few moves as possible!
+  </div>
+</main>
+
+<script>
+const dictionary = new Set([
+  "COLD","CORD","CARD","WARD","WARM","WORD","WORK","WORM",
+  "BOLD","GOLD","SOLD","TOLD","FOLD","HOLD","COLT","CULT",
+  "COST","CAST","CART","CARE","CAME","CAPE","COPE","CORE",
+  "CONE","BONE","BANE","BAND","BEND","BENT","BEST","BEAT",
+  "BEAR","BEER","BEEN","BEAN","MEAN","MEAT","MELT","MALT",
+  "MALL","BALL","BAIL","BAIT","WAIT","WAIL","WALL","WILL",
+  "WELL","WELD","WILD","MILD","MILE","MINE","LINE","LIME",
+  "LIKE","BIKE","HIKE","HIRE","FIRE","FINE","FIND","MIND",
+  "MINT","MIST","LIST","LAST","FAST","FIST","FISH","DISH",
+  "DASH","CASH","CASE","BASE","BARE","CARE","DARK","PARK",
+  "PART","PAST","PANT","WANT","WENT","WEST","REST","BEST",
+  "TEST","TEXT","NEXT","NEST","NEAT","SEAT","SEAL","REAL",
+  "READ","ROAD","ROAM","FOAM","FORM","FARM","HARM","HARD",
+  "HAND","LAND","LEND","LENT","RENT","RANT","RANK","BANK",
+  "BARK","DARK","DART","MART","MARK","MAKE","TAKE","TALK",
+  "WALK","WALL","TALL","TAIL","MAIL","MAIN","PAIN","GAIN",
+  "RAIN","RAID","SAID","SAND","SEND","SENT","SINK","PINK",
+  "PINE","WINE","WIND","MIND","MEND","MANY","MAYO","MATE",
+  "LATE","GATE","DATE","DATA","DOVE","LOVE","MOVE","MORE",
+  "SORE","SURE","PURE","CURE","CUBE","CUTE","MUTE","MULE",
+  "RULE","RULY","RUSE","RUSH","BUSH","BASH","WASH","WISH",
+  "FISH","FIST","LIST","LIFT","GIFT","GILT","GIRL","BIRD",
+  "WORD","WOOD","GOOD","MOOD","FOOD","FOOT","BOOT","BOOK",
+  "COOK","LOOK","LOCK","ROCK","RACK","PACK","BACK","HACK",
+  "HALL","CALL","FALL","FAIL","SAIL","SOIL","SOUL","FOUL",
+  "FOUR","YOUR","POUR","SOUR","TOUR","TOWN","DOWN","DOVE",
+  "LOVE","HOVE","HAVE","SAVE","SAME","SOME","HOME","HOPE",
+  "COPE","ROPE","RIPE","RIDE","SIDE","SITE","SATE","SAGE",
+  "PAGE","CAGE","CAME","GAME","NAME","FAME","LAME","LAMP",
+  "LIMP","LIME","TIME","TILE","TIDE","HIDE","HIRE","HERE",
+  "HERO","ZERO","ZEST","REST","RUST","MUST","DUST","JUST",
+  "JUMP","BUMP","DUMP","DAMP","LAMP","LIMP","LUMP","LUNG",
+  "SUNG","SING","RING","RANG","RANK","TANK","TANG","TONG",
+  "LONG","SONG","SANG","SANE","CANE","CAVE","SAVE","SAGE",
+  "RAGE","RACE","FACE","FACT","PACT","PACK","PECK","PICK",
+  "SICK","SACK","SANK","SINK","PINK","PUNK","PUNT","PANT",
+  "PENT","PEST","WEST","WENT","VENT","VEST","BEST","BUST",
+  "BUST","MUST","MIST","MATS","MATE","MUTE","MUSE","MUSE",
+  "CANE","CONE","CUTE","CUBE","CURE","PURE","PARE","PARK"
+]);
+
+const puzzles = [
+  {start:"COLD",end:"WARM"},
+  {start:"CAT",end:"DOG"},
+  {start:"HEAD",end:"TAIL"},
+  {start:"LOVE",end:"HATE"},
+  {start:"FOOL",end:"WISE"},
+  {start:"CATS",end:"DOGS"},
+  {start:"WALL",end:"GATE"},
+  {start:"SAND",end:"ROCK"},
+  {start:"MOON",end:"STAR"},
+  {start:"FIRE",end:"WIND"}
+];
+
+const shortDictionary = new Set([
+  ...dictionary,
+  "CAT","BAT","HAT","MAT","RAT","SAT","PAT","TAP","MAP","CAP",
+  "CAN","MAN","PAN","RAN","FAN","DAN","DOG","LOG","FOG","HOG",
+  "BAG","BIG","DIG","FIG","PIG","WIG","BUG","HUG","MUG","RUG",
+  "BED","RED","FED","LED","GET","JET","LET","MET","NET","PET",
+  "POT","HOT","DOT","GOT","LOT","NOT","ROT","TOP","POP","HOP",
+  "BOX","FOX","SIX","MIX","FIX","BIT","FIT","HIT","KIT","LIT",
+  "SIT","WIN","TIN","PIN","BIN","FIN","RUN","FUN","SUN","GUN",
+  "CUP","PUP","SUP","BUS","BUT","CUT","GUT","NUT","OUT","OUR",
+  "OWL","ACE","AGE","AID","AIM","AIR","ALL","AND","ANT","ANY",
+  "APE","ARC","ARE","ARM","ART","ASK","ATE","BAD","BAG","BAN",
+  "BAR","BAY","BEE","BET","BID","BIG","BIN","BIT","BOW","BOX",
+  "BOY","BUN","BUY","BYE","CAR","COP","COT","COW","CRY","CUB",
+  "DAM","DAY","DEN","DID","DIE","DIM","DIN","DIP","DOE","DRY",
+  "EAR","EAT","EGG","ELF","END","ERA","EVE","EYE","FAR","FAT",
+  "FEW","FLY","FOR","GAP","GAS","GEM","GOD","GUM","GUT","GYM",
+  "HAD","HAM","HAS","HAY","HER","HIM","HIS","HOW","ICE","INK",
+  "JAM","JAR","JAW","JOB","JOY","KEY","KID","KIN","KIT","LAW",
+  "LAY","LEG","LIE","LIP","LIT","LOW","MAD","MAN","MAP","MEN",
+  "MID","MOM","MUD","MUG","MUM","NAP","NEW","NOD","NOR","OAK",
+  "OAR","ODD","OFF","OIL","OLD","ONE","ORE","OUR","OUT","OWL",
+  "OWN","PAD","PAL","PEN","PEA","PIE","PIT","PLY","POD","POP",
+  "PRO","PUB","PUT","RAG","RAM","RAP","RAW","RAY","RIB","RID",
+  "RIM","RIP","ROB","ROD","ROW","RUB","RUG","SAD","SAW","SAY",
+  "SEA","SEE","SET","SEW","SHE","SHY","SIN","SIR","SKI","SKY",
+  "SOB","SON","SOW","SPY","SUB","SUM","TAB","TAG","TAN","TAR",
+  "TEA","TEN","THE","TIE","TIP","TOE","TOO","TOW","TRY","TUB",
+  "TWO","USE","VAN","VAT","VET","VIA","VOW","WAR","WAS","WAY",
+  "WEB","WET","WHO","WHY","WIT","YES","YET","YOU","ZIP","ZOO"
+]);
+
+const allWords = new Set([...dictionary,...shortDictionary]);
+let puzzleIndex = 0;
+let startWord = "";
+let targetWord = "";
+let chain = [];
+let solved = 0;
+let best = null;
+let gameOver = false;
+let hintsUsed = 0;
+
+function startPuzzle(index) {
+  puzzleIndex = index % puzzles.length;
+  startWord = puzzles[puzzleIndex].start;
+  targetWord = puzzles[puzzleIndex].end;
+  chain = [startWord];
+  gameOver = false;
+  hintsUsed = 0;
+
+  $("startWord").textContent = startWord;
+  $("endWord").textContent = targetWord;
+  $("wordInput").value = "";
+  $("wordInput").disabled = false;
+  $("feedback").textContent = "";
+  $("feedback").className = "feedback";
+  $("status").textContent = "🧩 Start building your word bridge!";
+  $("moves").textContent = 0;
+
+  renderSteps();
+  $("wordInput").focus();
+}
+
+function $(id) {
+  return document.getElementById(id);
+}
+
+function differenceCount(a,b) {
+  if (a.length !== b.length) return Infinity;
+  let count = 0;
+  for (let i=0;i<a.length;i++) {
+    if (a[i] !== b[i]) count++;
+  }
+  return count;
+}
+
+function isValidWord(word) {
+  return allWords.has(word);
+}
+
+function renderSteps() {
+  const container = $("steps");
+  container.innerHTML = "";
+
+  chain.forEach((word,index) => {
+    const item = document.createElement("div");
+    item.className = "step" +
+      (index === chain.length - 1 ? " current" : " completed");
+
+    const number = document.createElement("span");
+    number.className = "number";
+    number.textContent = index === 0 ? "START" : "MOVE " + index;
+
+    const text = document.createElement("span");
+    text.className = "step-word";
+    text.textContent = word;
+
+    const marker = document.createElement("span");
+    marker.className = "step-arrow";
+    marker.textContent = index === chain.length - 1 ? "●" : "✓";
+
+    item.append(number,text,marker);
+    container.appendChild(item);
+
+    if (index < chain.length - 1) {
+      const arrow = document.createElement("div");
+      arrow.className = "step-arrow";
+      arrow.textContent = "↓";
+      container.appendChild(arrow);
+    }
+  });
+}
+
+function submitWord() {
+  if (gameOver) return;
+
+  const input = $("wordInput");
+  const word = input.value.trim().toUpperCase();
+  const current = chain[chain.length - 1];
+
+  if (!word) {
+    showFeedback("Enter a word to continue!",false);
+    return;
+  }
+
+  if (word.length !== startWord.length) {
+    showFeedback("Your word must have exactly " + startWord.length + " letters.",false);
+    return;
+  }
+
+  if (word === current) {
+    showFeedback("Choose a different word!",false);
+    return;
+  }
+
+  if (!isValidWord(word)) {
+    showFeedback("That word isn't in our word list. Try another!",false);
+    return;
+  }
+
+  if (differenceCount(current,word) !== 1) {
+    showFeedback("Change exactly ONE letter at a time!",false);
+    return;
+  }
+
+  chain.push(word);
+  $("moves").textContent = chain.length - 1;
+  input.value = "";
+  renderSteps();
+
+  if (word === targetWord) {
+    gameOver = true;
+    solved++;
+    $("solved").textContent = solved;
+
+    const moves = chain.length - 1;
+    if (best === null || moves < best) best = moves;
+    $("best").textContent = best + " moves";
+
+    $("feedback").textContent = "🎉 Bridge complete! You reached " + targetWord + "!";
+    $("feedback").className = "feedback good";
+    $("status").textContent = "🏆 Puzzle solved in " + moves + " moves!";
+    $("status").classList.add("success");
+    input.disabled = true;
+  } else {
+    showFeedback("✓ Valid word! Keep building your bridge.",true);
+    $("status").textContent = "🌉 Good move! Your current word is " + word + ".";
+  }
+}
+
+function showFeedback(message,good) {
+  $("feedback").textContent = message;
+  $("feedback").className = "feedback " + (good ? "good" : "bad");
+}
+
+function undoMove() {
+  if (gameOver || chain.length <= 1) return;
+
+  chain.pop();
+  $("moves").textContent = chain.length - 1;
+  $("wordInput").value = "";
+  $("feedback").textContent = "";
+  $("status").classList.remove("success");
+  $("status").textContent = "↶ Last move undone.";
+  renderSteps();
+}
+
+function showHint() {
+  if (gameOver) return;
+
+  const current = chain[chain.length - 1];
+  const candidates = [...allWords].filter(word =>
+    word.length === current.length &&
+    differenceCount(current,word) === 1 &&
+    !chain.includes(word)
+  );
+
+  if (candidates.length === 0) {
+    showFeedback("No available next word in the current word list.",false);
+    return;
+  }
+
+  const targetDifference = candidates.map(word => ({
+    word,
+    distance:differenceCount(word,targetWord)
+  })).sort((a,b) => a.distance - b.distance);
+
+  hintsUsed++;
+  showFeedback("💡 Try a word like " + targetDifference[0].word + ".",true);
+}
+
+function newPuzzle() {
+  $("status").classList.remove("success");
+  let next = puzzleIndex;
+  while (puzzles.length > 1 && next === puzzleIndex) {
+    next = Math.floor(Math.random() * puzzles.length);
+  }
+  startPuzzle(next);
+}
+
+$("wordInput").addEventListener("keydown",event => {
+  if (event.key === "Enter") submitWord();
+});
+
+$("solved").textContent = solved;
+$("best").textContent = "—";
+startPuzzle(0);
+</script>
+</body>
+</html>
